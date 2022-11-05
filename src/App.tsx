@@ -1,13 +1,15 @@
+import { FC } from "react";
 import Header from "./views/Header/Header";
-import Question from "./views/Question/Question";
+import Game from "./views/Game/Game";
 
-function App() {
+const App: FC = () => {
   return (
     <>
       <Header />
-      <Question />
+
+      <Game />
     </>
   );
-}
+};
 
 export default App;
