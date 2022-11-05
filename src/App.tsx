@@ -1,6 +1,7 @@
 import { getEasyQuestions } from "./api/question";
 import { useQuery } from "react-query";
 import "./App.css";
+import Header from "./components/Header/Header";
 
 function App() {
   const { data: easyQuestions } = useQuery(
@@ -15,8 +16,7 @@ function App() {
 
   return (
     <>
-      <header>Frivolous Hunter</header>
-      <div>Questions</div>
+      <Header />
     </>
   );
 }

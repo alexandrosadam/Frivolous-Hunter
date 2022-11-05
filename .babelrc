@@ -1,0 +1,16 @@
+{
+  "presets": [
+    "@babel/preset-typescript",
+    [
+      "@babel/preset-react",
+      {
+        "preset-react": {
+          "loose": true,
+          "runtime": "automatic",
+          "importSource": "@emotion/react"
+        }
+      }
+    ]
+  ],
+  "plugins": ["@emotion"]
+}
