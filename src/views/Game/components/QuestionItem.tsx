@@ -1,6 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import React, { FC, useState } from "react";
 import { decodeResponse, shuffleArray } from "../../../helpers/view";
+import { Button, Grid } from "@mui/material";
+import { questionContainer } from "./styles";
 
 type QuestionItemProps = {
   correctAnswer: string;
@@ -35,31 +37,48 @@ const QuestionItem: FC<QuestionItemProps> = ({
   };
 
   return (
-    <section>
-      <div>Difficullty: {difficulty}</div>
-      <div>{decodeResponse(question)}</div>
-      <ul>
+    <section css={questionContainer}>
+      <div className="difficulty-question-container">
+        <div className="difficulty-wrapper">Difficullty: {difficulty}</div>
+        <div className="question-wrapper">{decodeResponse(question)}</div>
+      </div>
+
+      <Grid
+        className="grid-container"
+        container
+        rowSpacing={2}
+        alignItems="center"
+        justifyContent="center"
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+      >
         {possibleAnswers.map((possibleAnswer, index) => {
           return (
-            <li key={index}>
-              <button
-                className=""
-                onClick={handlePlayersSubmit}
-                // disabled={playerHasPickedAnswer}
-              >
-                {decodeResponse(possibleAnswer)}
-              </button>
-            </li>
+            <Grid item xs={6}>
+              <li key={index}>
+                <Button
+                  variant="contained"
+                  className="answer-btn"
+                  onClick={handlePlayersSubmit}
+                  // disabled={playerHasPickedAnswer}
+                >
+                  {decodeResponse(possibleAnswer)}
+                </Button>
+              </li>
+            </Grid>
           );
         })}
-      </ul>
-      <button
-        className=""
-        onClick={onNextClick}
-        disabled={!playerHasPickedAnswer}
-      >
-        Next ➡
-      </button>
+      </Grid>
+
+      <div className="next-btn-container">
+        <Button
+          variant="outlined"
+          className="next-btn"
+          onClick={onNextClick}
+          disabled={!playerHasPickedAnswer}
+        >
+          Next ➡
+        </Button>
+      </div>
     </section>
   );
 };

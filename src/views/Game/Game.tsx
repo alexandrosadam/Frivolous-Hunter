@@ -10,6 +10,7 @@ import {
 import { shuffleQuestions } from "../../helpers/view";
 import QuestionItem from "./components/QuestionItem";
 import { ThreeDots } from "react-loader-spinner";
+import { loader } from "./styles";
 
 const convertDifficultyToPoints = (difficulty: string): number => {
   if (difficulty === "easy") return 15;
@@ -74,11 +75,11 @@ const Game: FC = () => {
 
   if (isLoading)
     return (
-      <div className="loader-container">
+      <div css={loader}>
         <ThreeDots
           height="80"
           width="80"
-          color="#4fa94d"
+          color="#123ba1"
           ariaLabel="three-dots-loading"
           wrapperStyle={{}}
           visible={true}
