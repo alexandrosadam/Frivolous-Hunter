@@ -20,3 +20,15 @@ export const getEasyQuestions = async (): Promise<QuestionRes> => {
 
   return res.data;
 };
+
+export const getMediumQuestions = async (): Promise<QuestionRes> => {
+  const res = await Axios.get(ENDPOINTS.question.medium);
+
+  return res.data;
+};
+
+export const getHardQuestions = async (): Promise<QuestionRes> => {
+  const res = await Axios.get(ENDPOINTS.question.hard);
+
+  return res.data;
+};

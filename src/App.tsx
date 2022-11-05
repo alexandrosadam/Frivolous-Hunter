@@ -1,22 +1,11 @@
-import { getEasyQuestions } from "./api/question";
-import { useQuery } from "react-query";
-import "./App.css";
-import Header from "./components/Header/Header";
+import Header from "./views/Header/Header";
+import Question from "./views/Question/Question";
 
 function App() {
-  const { data: easyQuestions } = useQuery(
-    ["easy-question"],
-    getEasyQuestions,
-    {
-      select: (question) => ({ data: question.results }),
-    }
-  );
-
-  console.log(easyQuestions?.data);
-
   return (
     <>
       <Header />
+      <Question />
     </>
   );
 }
