@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import {
   getEasyQuestions,
@@ -22,7 +22,6 @@ const convertDifficultyToPoints = (difficulty: string): number => {
 const defaultGameState = {
   score: 0,
   questionIndex: 0,
-  isGameOver: false,
 };
 
 const levelOfDifficulties = {
@@ -35,8 +34,14 @@ const Game: FC = () => {
   const [game, setGame] = useState(defaultGameState);
   const [answersLevel, setAnswersLevel] = useState(levelOfDifficulties);
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  // TODO => set to false when end screen page is completed
-  const [gameOver, setGameOver] = useState(true);
+  const [gameOver, setGameOver] = useState(false);
+
+  useEffect(() => {
+    refetchEasy();
+    refetchMedium();
+    refetchHard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameOver]);
 
   // destruct properties
   const { score, questionIndex } = game;
@@ -45,32 +50,32 @@ const Game: FC = () => {
   const questions = [] as Question[];
 
   // fetch the different types of questions
-  const { data: easyQuestions, status: easyQuestionStatus } = useQuery(
-    ["easy-question"],
-    getEasyQuestions,
-    {
-      select: (question) => ({ data: question.results }),
-      refetchOnWindowFocus: false,
-    }
-  );
+  const {
+    data: easyQuestions,
+    status: easyQuestionStatus,
+    refetch: refetchEasy,
+  } = useQuery(["easy-question"], getEasyQuestions, {
+    select: (question) => ({ data: question.results }),
+    refetchOnWindowFocus: false,
+  });
 
-  const { data: mediumQuestions, status: mediumQuestionStatus } = useQuery(
-    ["medium-question"],
-    getMediumQuestions,
-    {
-      select: (question) => ({ data: question.results }),
-      refetchOnWindowFocus: false,
-    }
-  );
+  const {
+    data: mediumQuestions,
+    status: mediumQuestionStatus,
+    refetch: refetchMedium,
+  } = useQuery(["medium-question"], getMediumQuestions, {
+    select: (question) => ({ data: question.results }),
+    refetchOnWindowFocus: false,
+  });
 
-  const { data: hardQuestions, status: hardQuestionStatus } = useQuery(
-    ["hard-question"],
-    getHardQuestions,
-    {
-      select: (question) => ({ data: question.results }),
-      refetchOnWindowFocus: false,
-    }
-  );
+  const {
+    data: hardQuestions,
+    status: hardQuestionStatus,
+    refetch: refetchHard,
+  } = useQuery(["hard-question"], getHardQuestions, {
+    select: (question) => ({ data: question.results }),
+    refetchOnWindowFocus: false,
+  });
 
   const isLoading =
     easyQuestionStatus === "loading" ||
@@ -108,7 +113,8 @@ const Game: FC = () => {
     questionData;
 
   const restartGame = (): void => {
-    setGame(defaultGameState);
+    setGame({ ...game, score: 0, questionIndex: 0 });
+    setGameOver((toggle) => !toggle);
   };
 
   const loadNextQuestion = () => {
