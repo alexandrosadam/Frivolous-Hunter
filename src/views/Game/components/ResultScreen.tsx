@@ -1,9 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { Button } from "@mui/material";
 import { FC, useState } from "react";
+import DetailsModal from "./DetailsModal";
 import { resultContainer } from "./styles";
 
-type LevelOfQuestion = {
+export type LevelOfQuestion = {
   easy: number;
   medium: number;
   hard: number;
@@ -16,44 +17,50 @@ type ResultScreenProps = {
   restart_the_game: () => void;
 };
 
-const levelOfDifficulties = {
-  easy: 0,
-  medium: 0,
-  hard: 0,
-};
-
 const ResultScreen: FC<ResultScreenProps> = ({
-  correct_answers = 3,
-  total_score = 58,
+  correct_answers,
+  total_score,
   details_answers,
   restart_the_game,
 }) => {
-  // keep the modal state for more details
-  const [openDetails, setOpenDetails] = useState(false);
-  const [level, setLevel] = useState(levelOfDifficulties);
-  const handleMoreDetails = () => {};
+  const [showModal, setShowModal] = useState(false);
+
+  const closeDetailsModal = (): void => setShowModal(false);
+  const openDetailsModal = (): void => setShowModal(true);
 
   return (
-    <section css={resultContainer}>
-      <div className="result-header">Congratulations!!</div>
-      <div className="correct-answers">
-        Correct answers {correct_answers}/15
-      </div>
-      <div className="score-container">
-        Your score is <br />
-        <strong>{total_score}</strong>
-      </div>
-      <div className="btns-container">
-        <Button
-          className="retry-btn"
-          variant="contained"
-          onClick={restart_the_game}
-        >
-          Retry
-        </Button>
-        <Button variant="outlined">More details</Button>
-      </div>
-    </section>
+    <>
+      <section css={resultContainer}>
+        <div className="result-header">Congratulations!!</div>
+        <div className="correct-answers">
+          Correct answers {correct_answers}/15
+        </div>
+        <div className="score-container">
+          Your score is <br />
+          <strong>{total_score}</strong>
+        </div>
+        <div className="btns-container">
+          <Button
+            className="retry-btn"
+            variant="contained"
+            onClick={restart_the_game}
+          >
+            Retry
+          </Button>
+          <Button variant="outlined" onClick={openDetailsModal}>
+            More details
+          </Button>
+        </div>
+      </section>
+      {showModal && (
+        <DetailsModal
+          details_answers={details_answers}
+          total_score={total_score}
+          isOpen={showModal}
+          onClose={closeDetailsModal}
+        />
+      )}
+    </>
   );
 };
 

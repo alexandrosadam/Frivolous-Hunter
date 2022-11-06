@@ -84,3 +84,14 @@ export const resultContainer = () => css`
     }
   }
 `;
+
+export const modalContainer = () => css`
+  .modal-title {
+    text-align: center;
+  }
+
+  .details-container {
+    display: flex;
+    justify-content: center;
+  }
+`;

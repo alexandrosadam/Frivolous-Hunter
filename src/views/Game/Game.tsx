@@ -35,7 +35,8 @@ const Game: FC = () => {
   const [game, setGame] = useState(defaultGameState);
   const [answersLevel, setAnswersLevel] = useState(levelOfDifficulties);
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
+  // TODO => set to false when end screen page is completed
+  const [gameOver, setGameOver] = useState(true);
 
   // destruct properties
   const { score, questionIndex } = game;
