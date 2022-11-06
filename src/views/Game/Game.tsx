@@ -36,6 +36,7 @@ const Game: FC = () => {
   const [answersLevel, setAnswersLevel] = useState(defaultLevelOfDifficulties);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const questions = [] as Question[];
 
   useEffect(() => {
     refetchEasy();
@@ -47,8 +48,6 @@ const Game: FC = () => {
   // destruct properties
   const { score, questionIndex } = game;
   const { easy, medium, hard } = answersLevel;
-
-  const questions = [] as Question[];
 
   // fetch the different types of questions
   const {
