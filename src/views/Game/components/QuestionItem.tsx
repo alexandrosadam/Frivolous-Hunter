@@ -7,8 +7,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 type QuestionItemProps = {
-  correctAnswer: string;
-  incorrectAnswers: string[];
+  question_number: number;
+  correct_answer: string;
+  incorrect_answers: string[];
   question: string;
   difficulty: string;
   onNextClick: () => void;
@@ -16,8 +17,9 @@ type QuestionItemProps = {
 };
 
 const QuestionItem: FC<QuestionItemProps> = ({
-  correctAnswer,
-  incorrectAnswers,
+  question_number,
+  correct_answer,
+  incorrect_answers,
   question,
   difficulty,
   onNextClick,
@@ -26,7 +28,7 @@ const QuestionItem: FC<QuestionItemProps> = ({
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const playerHasPickedAnswer = selectedAnswer !== "";
   const [possibleAnswers] = useState(
-    () => shuffleArray([correctAnswer, ...incorrectAnswers]) as string[]
+    () => shuffleArray([correct_answer, ...incorrect_answers]) as string[]
   );
 
   const handlePlayersSubmit = (
@@ -35,11 +37,13 @@ const QuestionItem: FC<QuestionItemProps> = ({
     event.preventDefault();
     const playerAnswer = event.currentTarget.innerText;
     setSelectedAnswer(playerAnswer);
-    const isPlayerCorrect = playerAnswer === correctAnswer.toUpperCase();
+    const isPlayerCorrect = playerAnswer === correct_answer.toUpperCase();
     onAnswerSelect(isPlayerCorrect, difficulty);
     if (isPlayerCorrect) toast.success("Well done. You are correct!");
     if (!isPlayerCorrect) toast.error("Oops!..You are wrong");
   };
+
+  console.log("question number = ", question_number);
 
   return (
     <section css={questionContainer}>
@@ -76,14 +80,25 @@ const QuestionItem: FC<QuestionItemProps> = ({
       </Grid>
 
       <div className="next-btn-container">
-        <Button
-          variant="outlined"
-          className="next-btn"
-          onClick={onNextClick}
-          disabled={!playerHasPickedAnswer}
-        >
-          Next ➡
-        </Button>
+        {question_number + 1 === 15 ? (
+          <Button
+            variant="contained"
+            className="next-btn"
+            onClick={onNextClick}
+            disabled={!playerHasPickedAnswer}
+          >
+            Go to results
+          </Button>
+        ) : (
+          <Button
+            variant="outlined"
+            className="next-btn"
+            onClick={onNextClick}
+            disabled={!playerHasPickedAnswer}
+          >
+            Next ➡
+          </Button>
+        )}
       </div>
     </section>
   );

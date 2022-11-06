@@ -165,8 +165,9 @@ const Game: FC = () => {
       </div>
       <QuestionItem
         key={questionIndex}
-        correctAnswer={decodeResponse(correct_answer) as string}
-        incorrectAnswers={decodeResponse(incorrect_answers) as string[]}
+        question_number={questionIndex}
+        correct_answer={decodeResponse(correct_answer) as string}
+        incorrect_answers={decodeResponse(incorrect_answers) as string[]}
         question={decodeResponse(question) as string}
         difficulty={difficulty}
         onNextClick={loadNextQuestion}
