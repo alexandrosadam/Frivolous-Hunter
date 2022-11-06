@@ -6,8 +6,16 @@ export const shuffleArray = (
   return array.sort(() => 0.5 - Math.random());
 };
 
-export const decodeResponse = (str: string): string => {
-  return decodeURIComponent(str);
+export const decodeResponse = (str: string | string[]): string | string[] => {
+  if (Array.isArray(str)) {
+    const decodedArray: string[] = [];
+    str.map((element) => {
+      decodedArray.push(decodeURIComponent(element));
+    });
+    return decodedArray;
+  } else {
+    return decodeURIComponent(str);
+  }
 };
 
 // shuffle the question's array and return 5 of them

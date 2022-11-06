@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import React, { FC, useState } from "react";
-import { decodeResponse, shuffleArray } from "../../../helpers/view";
+import { shuffleArray } from "../../../helpers/view";
 import { Button, Grid } from "@mui/material";
 import { questionContainer } from "./styles";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type QuestionItemProps = {
   correctAnswer: string;
@@ -22,25 +24,27 @@ const QuestionItem: FC<QuestionItemProps> = ({
   onAnswerSelect,
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState("");
-  const playerHasPickedAnswer = selectedAnswer !== null;
-  const possibleAnswers = shuffleArray([
-    correctAnswer,
-    ...incorrectAnswers,
-  ]) as string[];
+  const playerHasPickedAnswer = selectedAnswer !== "";
+  const [possibleAnswers] = useState(
+    () => shuffleArray([correctAnswer, ...incorrectAnswers]) as string[]
+  );
 
-  const handlePlayersSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handlePlayersSubmit = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): void => {
     event.preventDefault();
-    const playerAnswer = event.currentTarget.innerHTML;
+    const playerAnswer = event.currentTarget.innerText;
     setSelectedAnswer(playerAnswer);
-    const isPlayerCorrect = playerAnswer === correctAnswer;
+    const isPlayerCorrect = playerAnswer === correctAnswer.toUpperCase();
     onAnswerSelect(isPlayerCorrect, difficulty);
+    if (isPlayerCorrect) toast.success("Well done. You are correct!");
+    if (!isPlayerCorrect) toast.error("Oops!..You are wrong");
   };
 
   return (
     <section css={questionContainer}>
-      <div className="difficulty-question-container">
-        <div className="difficulty-wrapper">Difficullty: {difficulty}</div>
-        <div className="question-wrapper">{decodeResponse(question)}</div>
+      <div className="question-container">
+        <div className="question">{question}</div>
       </div>
 
       <Grid
@@ -53,16 +57,18 @@ const QuestionItem: FC<QuestionItemProps> = ({
       >
         {possibleAnswers.map((possibleAnswer, index) => {
           return (
-            <Grid item xs={6}>
+            <Grid item xs={6} key={index}>
               <li key={index}>
                 <Button
                   variant="contained"
                   className="answer-btn"
                   onClick={handlePlayersSubmit}
-                  // disabled={playerHasPickedAnswer}
+                  disabled={playerHasPickedAnswer}
                 >
-                  {decodeResponse(possibleAnswer)}
+                  {possibleAnswer}
                 </Button>
+
+                <ToastContainer />
               </li>
             </Grid>
           );

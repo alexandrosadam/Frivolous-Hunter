@@ -7,10 +7,10 @@ import {
   getMediumQuestions,
   Question,
 } from "../../api/question";
-import { shuffleQuestions } from "../../helpers/view";
+import { decodeResponse, shuffleQuestions } from "../../helpers/view";
 import QuestionItem from "./components/QuestionItem";
 import { ThreeDots } from "react-loader-spinner";
-import { loader } from "./styles";
+import { gameContainer, loader } from "./styles";
 
 const convertDifficultyToPoints = (difficulty: string): number => {
   if (difficulty === "easy") return 15;
@@ -86,7 +86,6 @@ const Game: FC = () => {
         />
       </div>
     );
-  console.log(questions);
 
   const questionData = questions[questionIndex] ?? [];
   const { correct_answer, incorrect_answers, question, difficulty } =
@@ -113,19 +112,28 @@ const Game: FC = () => {
     // create an end screen component
   }
 
+  console.log("Rendered");
+
+  console.log("question = ", decodeResponse(question));
+
   return (
-    <>
-      {/* TODO: create stats component<Stats></Stats> */}
+    <section css={gameContainer}>
+      <div className="difficulty-question-container">
+        <span className="question-number">
+          Question {questionIndex + 1}/{questions.length}
+        </span>
+        <span className="difficulty-level">Difficulty: {difficulty}</span>
+      </div>
       <QuestionItem
         key={questionIndex}
-        correctAnswer={correct_answer}
-        incorrectAnswers={incorrect_answers}
-        question={question}
+        correctAnswer={decodeResponse(correct_answer) as string}
+        incorrectAnswers={decodeResponse(incorrect_answers) as string[]}
+        question={decodeResponse(question) as string}
         difficulty={difficulty}
         onNextClick={loadNextQuestion}
         onAnswerSelect={onAnswerSelect}
       />
-    </>
+    </section>
   );
 };
 

@@ -6,3 +6,20 @@ export const loader = () => css`
   left: 50%;
   transform: translate(-50%, -50%);
 `;
+
+export const gameContainer = () => css`
+  .difficulty-question-container {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+
+    .question-number {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+
+    .difficulty-level {
+      font-size: 1.5rem;
+    }
+  }
+`;

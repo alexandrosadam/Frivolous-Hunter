@@ -11,7 +11,7 @@ export const questionContainer = () => css`
     list-style-type: none;
   }
 
-  .difficulty-question-container {
+  .question-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,18 +20,20 @@ export const questionContainer = () => css`
       font-size: 1.5rem;
     }
 
-    .question-wrapper {
+    .question {
+      padding: 0 1.5rem;
       font-size: 2rem;
     }
   }
 
   .grid-container {
     width: 30%;
-    margin: 0 auto;
+    margin: 1rem auto;
 
     .answer-btn {
-      padding: 1rem;
+      min-height: 3.5rem;
       width: 100%;
+      padding: 0px 10px;
     }
   }
 
