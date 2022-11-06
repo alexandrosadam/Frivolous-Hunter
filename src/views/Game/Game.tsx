@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { FC, useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import { Button } from "@mui/material";
 import {
   getEasyQuestions,
   getHardQuestions,
@@ -10,7 +11,7 @@ import {
 import { decodeResponse, shuffleQuestions } from "../../helpers/view";
 import QuestionItem from "./components/QuestionItem";
 import { ThreeDots } from "react-loader-spinner";
-import { gameContainer, loader } from "./styles";
+import { errorContainer, gameContainer, loader } from "./styles";
 import ResultScreen from "./components/ResultScreen";
 
 const convertDifficultyToPoints = (difficulty: string): number => {
@@ -77,23 +78,12 @@ const Game: FC = () => {
     refetchOnWindowFocus: false,
   });
 
+  // handle loading state until data is fetched
   const isLoading =
     easyQuestionStatus === "loading" ||
     mediumQuestionStatus === "loading" ||
     hardQuestionStatus === "loading";
 
-  // combined different types of difficulties into one
-  if (easyQuestions?.data && mediumQuestions?.data && hardQuestions?.data) {
-    const shuffledEasyQuestions = shuffleQuestions(easyQuestions.data);
-    const shuffledMediumQuestions = shuffleQuestions(mediumQuestions.data);
-    const shuffledHardQuestions = shuffleQuestions(hardQuestions.data);
-
-    questions.push(
-      ...shuffledEasyQuestions,
-      ...shuffledMediumQuestions,
-      ...shuffledHardQuestions
-    );
-  }
   if (isLoading)
     return (
       <div css={loader}>
@@ -107,6 +97,19 @@ const Game: FC = () => {
         />
       </div>
     );
+
+  // combined different types of difficulties into one
+  if (easyQuestions?.data && mediumQuestions?.data && hardQuestions?.data) {
+    const shuffledEasyQuestions = shuffleQuestions(easyQuestions.data);
+    const shuffledMediumQuestions = shuffleQuestions(mediumQuestions.data);
+    const shuffledHardQuestions = shuffleQuestions(hardQuestions.data);
+
+    questions.push(
+      ...shuffledEasyQuestions,
+      ...shuffledMediumQuestions,
+      ...shuffledHardQuestions
+    );
+  }
 
   const questionData = questions[questionIndex] ?? [];
   const { correct_answer, incorrect_answers, question, difficulty } =
@@ -143,6 +146,25 @@ const Game: FC = () => {
       setCorrectAnswers((prev) => prev + 1);
     }
   };
+
+  // handle if an error is occurred when fetching the data
+  const error =
+    easyQuestionStatus === "error" ||
+    mediumQuestionStatus === "error" ||
+    hardQuestionStatus === "error";
+
+  if (error) {
+    setGameOver((toggle) => !toggle);
+
+    return (
+      <section css={errorContainer}>
+        <div className="error-message">There was an error occurred..</div>
+        <Button className="retry-btn" variant="contained" onClick={restartGame}>
+          Retry
+        </Button>
+      </section>
+    );
+  }
 
   if (gameOver) {
     return (

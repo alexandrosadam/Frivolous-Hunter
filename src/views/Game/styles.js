@@ -32,3 +32,17 @@ export const gameContainer = () => css`
     }
   }
 `;
+
+export const errorContainer = () => css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem auto;
+  flex-direction: column;
+
+  .error-message {
+    font-size: 2rem;
+    color: red;
+    margin-bottom: 1rem;
+  }
+`;
