@@ -43,8 +43,6 @@ const QuestionItem: FC<QuestionItemProps> = ({
     if (!isPlayerCorrect) toast.error("Oops!..You are wrong");
   };
 
-  console.log("question number = ", question_number);
-
   return (
     <section css={questionContainer}>
       <div className="question-container">

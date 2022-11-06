@@ -13,9 +13,18 @@ export const gameContainer = () => css`
     justify-content: center;
     margin: 1rem 0;
 
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: center;
+    }
+
     .question-number {
       font-size: 1.5rem;
       margin-right: 1rem;
+
+      @media (max-width: 600px) {
+        margin-right: 0;
+      }
     }
 
     .difficulty-level {

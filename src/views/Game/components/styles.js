@@ -23,12 +23,22 @@ export const questionContainer = () => css`
     .question {
       padding: 0 1.5rem;
       font-size: 2rem;
+
+      @media (max-width: 600px) {
+        text-align: center;
+        font-size: 1.5rem;
+      }
     }
   }
 
   .grid-container {
     width: 30%;
     margin: 1rem auto;
+
+    @media (max-width: 1100px) {
+      width: 85%;
+      margin: 2rem auto;
+    }
 
     .answer-btn {
       min-height: 3.5rem;
@@ -73,6 +83,13 @@ export const resultContainer = () => css`
     border: 1px solid black;
     width: 13%;
     padding: 1rem;
+
+    @media (max-width: 500px) {
+      width: 50%;
+    }
+    @media only screen and (min-width: 501px) and (max-width: 1050px) {
+      width: 28%;
+    }
   }
 
   .btns-container {

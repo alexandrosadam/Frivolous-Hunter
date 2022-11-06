@@ -24,7 +24,7 @@ const defaultGameState = {
   questionIndex: 0,
 };
 
-const levelOfDifficulties = {
+const defaultLevelOfDifficulties = {
   easy: 0,
   medium: 0,
   hard: 0,
@@ -32,7 +32,7 @@ const levelOfDifficulties = {
 
 const Game: FC = () => {
   const [game, setGame] = useState(defaultGameState);
-  const [answersLevel, setAnswersLevel] = useState(levelOfDifficulties);
+  const [answersLevel, setAnswersLevel] = useState(defaultLevelOfDifficulties);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [gameOver, setGameOver] = useState(false);
 
