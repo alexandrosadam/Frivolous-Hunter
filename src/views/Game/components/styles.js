@@ -47,3 +47,40 @@ export const questionContainer = () => css`
     }
   }
 `;
+
+export const resultContainer = () => css`
+  .result-header {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .correct-answers {
+    display: flex;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+
+  .score-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem auto;
+    font-size: 1.5rem;
+    border: 1px solid black;
+    width: 13%;
+    padding: 1rem;
+  }
+
+  .btns-container {
+    display: flex;
+    justify-content: center;
+
+    .retry-btn {
+      margin-right: 1rem;
+    }
+  }
+`;

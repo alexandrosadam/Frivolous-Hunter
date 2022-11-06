@@ -11,6 +11,7 @@ import { decodeResponse, shuffleQuestions } from "../../helpers/view";
 import QuestionItem from "./components/QuestionItem";
 import { ThreeDots } from "react-loader-spinner";
 import { gameContainer, loader } from "./styles";
+import ResultScreen from "./components/ResultScreen";
 
 const convertDifficultyToPoints = (difficulty: string): number => {
   if (difficulty === "easy") return 15;
@@ -24,18 +25,31 @@ const defaultGameState = {
   isGameOver: false,
 };
 
+const levelOfDifficulties = {
+  easy: 0,
+  medium: 0,
+  hard: 0,
+};
+
 const Game: FC = () => {
   const [game, setGame] = useState(defaultGameState);
-  const { score, questionIndex, isGameOver } = game;
+  const [answersLevel, setAnswersLevel] = useState(levelOfDifficulties);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+
+  // destruct properties
+  const { score, questionIndex } = game;
+  const { easy, medium, hard } = answersLevel;
 
   const questions = [] as Question[];
 
-  // fetch the questions
+  // fetch the different types of questions
   const { data: easyQuestions, status: easyQuestionStatus } = useQuery(
     ["easy-question"],
     getEasyQuestions,
     {
       select: (question) => ({ data: question.results }),
+      refetchOnWindowFocus: false,
     }
   );
 
@@ -44,6 +58,7 @@ const Game: FC = () => {
     getMediumQuestions,
     {
       select: (question) => ({ data: question.results }),
+      refetchOnWindowFocus: false,
     }
   );
 
@@ -52,6 +67,7 @@ const Game: FC = () => {
     getHardQuestions,
     {
       select: (question) => ({ data: question.results }),
+      refetchOnWindowFocus: false,
     }
   );
 
@@ -72,7 +88,6 @@ const Game: FC = () => {
       ...shuffledHardQuestions
     );
   }
-
   if (isLoading)
     return (
       <div css={loader}>
@@ -91,9 +106,13 @@ const Game: FC = () => {
   const { correct_answer, incorrect_answers, question, difficulty } =
     questionData;
 
+  const restartGame = (): void => {
+    setGame(defaultGameState);
+  };
+
   const loadNextQuestion = () => {
     if (questionIndex >= questions.length - 1) {
-      setGame({ ...game, isGameOver: true });
+      setGameOver((toggle) => !toggle);
     }
     setGame({ ...game, questionIndex: questionIndex + 1 });
   };
@@ -102,19 +121,32 @@ const Game: FC = () => {
     isPlayerCorrect: boolean,
     difficulty: string
   ): void => {
-    const points = convertDifficultyToPoints(difficulty);
     if (isPlayerCorrect) {
-      setGame({ ...game, score: score + points });
+      setGame({
+        ...game,
+        score: score + convertDifficultyToPoints(difficulty),
+      });
+      if (difficulty === "easy")
+        setAnswersLevel({ ...answersLevel, easy: easy + 1 });
+      if (difficulty === "medium")
+        setAnswersLevel({ ...answersLevel, medium: medium + 1 });
+      if (difficulty === "hard")
+        setAnswersLevel({ ...answersLevel, hard: hard + 1 });
+
+      setCorrectAnswers((prev) => prev + 1);
     }
   };
 
-  if (isGameOver) {
-    // create an end screen component
+  if (gameOver) {
+    return (
+      <ResultScreen
+        correct_answers={correctAnswers}
+        total_score={score}
+        details_answers={answersLevel}
+        restart_the_game={restartGame}
+      />
+    );
   }
-
-  console.log("Rendered");
-
-  console.log("question = ", decodeResponse(question));
 
   return (
     <section css={gameContainer}>
