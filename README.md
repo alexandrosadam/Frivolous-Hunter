@@ -1,6 +1,6 @@
-# Game with different level of questions
+# Quiz game
 
-This React application is a simple question game. It is written with Typescript. There are different types of questions and different leveles (easy, medium, hard) to answer. After the completion of the game you can see the results in detail about your answers. This project is exclusively for education purposes. The needed data is driven from opentdb in order to display real data from an api.
+This is a simple quiz game application implemented with React. It is written with Typescript. There are different types of questions and different levels (easy, medium, hard) to answer. After the completion of the game you can see the results in detail about your answers. This project is exclusively for education purposes. The needed data are driven from the opentdb in order to display real data from an api.
 
 ## Available Scripts
 
