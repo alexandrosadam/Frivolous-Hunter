@@ -1,37 +1,42 @@
 /** @jsxImportSource @emotion/react */
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import { shuffleArray } from "../../../helpers/view";
 import { Button, Grid } from "@mui/material";
-import { questionContainer } from "./styles";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { questionContainer } from "./styles";
 
 type QuestionItemProps = {
   question_number: number;
+  total_questions: number;
   correct_answer: string;
   incorrect_answers: string[];
   question: string;
   difficulty: string;
-  onNextClick: () => void;
+  loadNextQuestion: () => void;
   onAnswerSelect: (isPlayerCorrect: boolean, difficulty: string) => void;
+  showResultsPage: () => void;
 };
 
 const QuestionItem: FC<QuestionItemProps> = ({
   question_number,
+  total_questions,
   correct_answer,
   incorrect_answers,
   question,
   difficulty,
-  onNextClick,
+  loadNextQuestion,
   onAnswerSelect,
+  showResultsPage,
 }) => {
-  const [selectedAnswer, setSelectedAnswer] = useState("");
-  const playerHasPickedAnswer = selectedAnswer !== "";
   const [possibleAnswers] = useState(
     () => shuffleArray([correct_answer, ...incorrect_answers]) as string[]
   );
+  const [selectedAnswer, setSelectedAnswer] = useState("");
+  const lastQuestion = question_number === total_questions - 1;
+  const playerHasPickedAnswer = selectedAnswer !== "";
 
-  const handlePlayersSubmit = (
+  const handlePlayerSubmit = (
     event: React.MouseEvent<HTMLButtonElement>
   ): void => {
     event.preventDefault();
@@ -46,6 +51,12 @@ const QuestionItem: FC<QuestionItemProps> = ({
   return (
     <section css={questionContainer}>
       <div className="question-container">
+        <div className="question-info">
+          <span className="question-number">
+            Question: {question_number + 1}/{total_questions}
+          </span>
+          <span className="difficulty-level">Difficulty: {difficulty}</span>
+        </div>
         <div className="question">{question}</div>
       </div>
 
@@ -64,25 +75,23 @@ const QuestionItem: FC<QuestionItemProps> = ({
                 <Button
                   variant="contained"
                   className="answer-btn"
-                  onClick={handlePlayersSubmit}
+                  onClick={handlePlayerSubmit}
                   disabled={playerHasPickedAnswer}
                 >
                   {possibleAnswer}
                 </Button>
-
-                <ToastContainer />
               </li>
             </Grid>
           );
         })}
       </Grid>
 
-      <div className="next-btn-container">
-        {question_number + 1 === 15 ? (
+      <div className="footer-button-container">
+        {lastQuestion ? (
           <Button
             variant="contained"
             className="next-btn"
-            onClick={onNextClick}
+            onClick={showResultsPage}
             disabled={!playerHasPickedAnswer}
           >
             Go to results
@@ -91,13 +100,14 @@ const QuestionItem: FC<QuestionItemProps> = ({
           <Button
             variant="outlined"
             className="next-btn"
-            onClick={onNextClick}
+            onClick={loadNextQuestion}
             disabled={!playerHasPickedAnswer}
           >
             Next ➡
           </Button>
         )}
       </div>
+      <ToastContainer />
     </section>
   );
 };

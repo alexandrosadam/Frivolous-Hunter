@@ -19,3 +19,9 @@ export const shuffleQuestions = (questions: Question[]): Question[] => {
 
   return shuffleEasyQuestions?.slice(0, 5) as Question[];
 };
+
+export const convertDifficultyToPoints = (difficulty: string): number => {
+  if (difficulty === "easy") return 15;
+  if (difficulty === "medium") return 18;
+  return 25;
+};

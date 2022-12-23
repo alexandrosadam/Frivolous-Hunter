@@ -16,8 +16,19 @@ export const questionContainer = () => css`
     flex-direction: column;
     align-items: center;
 
-    .difficulty-wrapper {
-      font-size: 1.5rem;
+    .question-info {
+      margin-bottom: 1rem;
+
+      .question-number {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        font-weight: bold;
+      }
+
+      .difficulty-level {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
     }
 
     .question {

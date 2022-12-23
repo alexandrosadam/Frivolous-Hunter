@@ -8,21 +8,17 @@ import {
   getMediumQuestions,
   Question,
 } from "../../api/question";
-import { decodeResponse, shuffleQuestions } from "../../helpers/view";
+import { convertDifficultyToPoints, decodeResponse } from "../../helpers/view";
 import QuestionItem from "./components/QuestionItem";
 import { ThreeDots } from "react-loader-spinner";
 import { errorContainer, gameContainer, loader } from "./styles";
 import ResultScreen from "./components/ResultScreen";
 
-const convertDifficultyToPoints = (difficulty: string): number => {
-  if (difficulty === "easy") return 15;
-  if (difficulty === "medium") return 18;
-  return 25;
-};
-
 const defaultGameState = {
   score: 0,
   questionIndex: 0,
+  startOfTheGame: true,
+  gameIsOver: false,
 };
 
 const defaultLevelOfDifficulties = {
@@ -35,19 +31,19 @@ const Game: FC = () => {
   const [game, setGame] = useState(defaultGameState);
   const [answersLevel, setAnswersLevel] = useState(defaultLevelOfDifficulties);
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-  const questions = [] as Question[];
+  const [gameQuestions, setGameQuestions] = useState<Question[]>([]);
+  const lastQuestion = game.questionIndex === gameQuestions.length - 1;
+
+  // destruct properties
+  const { score, questionIndex, startOfTheGame, gameIsOver } = game;
+  const { easy, medium, hard } = answersLevel;
 
   useEffect(() => {
     refetchEasy();
     refetchMedium();
     refetchHard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameOver]);
-
-  // destruct properties
-  const { score, questionIndex } = game;
-  const { easy, medium, hard } = answersLevel;
+  }, [startOfTheGame]);
 
   // fetch the different types of questions
   const {
@@ -97,32 +93,31 @@ const Game: FC = () => {
       </div>
     );
 
-  // combined different types of difficulties into one
-  if (easyQuestions?.data && mediumQuestions?.data && hardQuestions?.data) {
-    const shuffledEasyQuestions = shuffleQuestions(easyQuestions.data);
-    const shuffledMediumQuestions = shuffleQuestions(mediumQuestions.data);
-    const shuffledHardQuestions = shuffleQuestions(hardQuestions.data);
+  const startQuizGame = () => {
+    setGameQuestions([
+      ...(easyQuestions?.data as Question[]),
+      ...(mediumQuestions?.data as Question[]),
+      ...(hardQuestions?.data as Question[]),
+    ]);
 
-    questions.push(
-      ...shuffledEasyQuestions,
-      ...shuffledMediumQuestions,
-      ...shuffledHardQuestions
-    );
-  }
-
-  const questionData = questions[questionIndex] ?? [];
-  const { correct_answer, incorrect_answers, question, difficulty } =
-    questionData;
+    setGame({
+      ...game,
+      startOfTheGame: false,
+    });
+  };
 
   const restartGame = (): void => {
-    setGame({ ...game, score: 0, questionIndex: 0 });
-    setGameOver((toggle) => !toggle);
+    setGame({
+      ...game,
+      score: 0,
+      questionIndex: 0,
+      startOfTheGame: true,
+      gameIsOver: false,
+    });
   };
 
   const loadNextQuestion = () => {
-    if (questionIndex >= questions.length - 1) {
-      setGameOver((toggle) => !toggle);
-    }
+    if (lastQuestion) setGame({ ...game, gameIsOver: true });
     setGame({ ...game, questionIndex: questionIndex + 1 });
   };
 
@@ -146,6 +141,8 @@ const Game: FC = () => {
     }
   };
 
+  const showResultsPage = () => setGame({ ...game, gameIsOver: true });
+
   // handle if an error is occurred when fetching the data
   const error =
     easyQuestionStatus === "error" ||
@@ -153,7 +150,7 @@ const Game: FC = () => {
     hardQuestionStatus === "error";
 
   if (error) {
-    setGameOver((toggle) => !toggle);
+    setGame({ ...game, gameIsOver: true });
 
     return (
       <section css={errorContainer}>
@@ -165,35 +162,51 @@ const Game: FC = () => {
     );
   }
 
-  if (gameOver) {
-    return (
-      <ResultScreen
-        correct_answers={correctAnswers}
-        total_score={score}
-        details_answers={answersLevel}
-        restart_the_game={restartGame}
-      />
-    );
-  }
+  const showQuestions = !isLoading && !startOfTheGame && !gameIsOver;
+  const questionData = gameQuestions[questionIndex] ?? {};
+  const { correct_answer, incorrect_answers, question, difficulty } =
+    questionData;
 
   return (
     <section css={gameContainer}>
-      <div className="difficulty-question-container">
-        <span className="question-number">
-          Question {questionIndex + 1}/{questions.length}
-        </span>
-        <span className="difficulty-level">Difficulty: {difficulty}</span>
-      </div>
-      <QuestionItem
-        key={questionIndex}
-        question_number={questionIndex}
-        correct_answer={decodeResponse(correct_answer) as string}
-        incorrect_answers={decodeResponse(incorrect_answers) as string[]}
-        question={decodeResponse(question) as string}
-        difficulty={difficulty}
-        onNextClick={loadNextQuestion}
-        onAnswerSelect={onAnswerSelect}
-      />
+      {game.startOfTheGame && (
+        <section className="home-game-page">
+          <h2 className="welcome-title">Welcome to Frivolous Hunter game!</h2>
+          <div>
+            <Button
+              className="start-game-button"
+              variant="contained"
+              onClick={startQuizGame}
+            >
+              Start
+            </Button>
+          </div>
+        </section>
+      )}
+
+      {showQuestions && (
+        <QuestionItem
+          key={questionIndex}
+          question_number={questionIndex}
+          total_questions={gameQuestions.length}
+          correct_answer={decodeResponse(correct_answer) as string}
+          incorrect_answers={decodeResponse(incorrect_answers) as string[]}
+          question={decodeResponse(question) as string}
+          difficulty={difficulty}
+          loadNextQuestion={loadNextQuestion}
+          onAnswerSelect={onAnswerSelect}
+          showResultsPage={showResultsPage}
+        />
+      )}
+
+      {gameIsOver && (
+        <ResultScreen
+          correct_answers={correctAnswers}
+          total_score={score}
+          details_answers={answersLevel}
+          restart_the_game={restartGame}
+        />
+      )}
     </section>
   );
 };
