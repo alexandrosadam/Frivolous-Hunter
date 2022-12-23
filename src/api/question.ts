@@ -1,4 +1,4 @@
-import { ENDPOINTS } from "./endpoints";
+import { ENDPOINT } from "./endpoints";
 import Axios from "axios";
 
 export type Question = {
@@ -15,20 +15,11 @@ type QuestionRes = {
   results: Question[];
 };
 
-export const getEasyQuestions = async (): Promise<QuestionRes> => {
-  const res = await Axios.get(ENDPOINTS.question.easy);
-
-  return res.data;
-};
-
-export const getMediumQuestions = async (): Promise<QuestionRes> => {
-  const res = await Axios.get(ENDPOINTS.question.medium);
-
-  return res.data;
-};
-
-export const getHardQuestions = async (): Promise<QuestionRes> => {
-  const res = await Axios.get(ENDPOINTS.question.hard);
+export const getQuestions = async (
+  amount: number,
+  difficulty: string
+): Promise<QuestionRes> => {
+  const res = await Axios.get(ENDPOINT.question(amount, difficulty));
 
   return res.data;
 };

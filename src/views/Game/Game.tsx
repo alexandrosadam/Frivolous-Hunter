@@ -2,12 +2,7 @@
 import { FC, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Button } from "@mui/material";
-import {
-  getEasyQuestions,
-  getHardQuestions,
-  getMediumQuestions,
-  Question,
-} from "../../api/question";
+import { getQuestions, Question } from "../../api/question";
 import { convertDifficultyToPoints, decodeResponse } from "../../helpers/view";
 import QuestionItem from "./components/QuestionItem";
 import { ThreeDots } from "react-loader-spinner";
@@ -50,7 +45,7 @@ const Game: FC = () => {
     data: easyQuestions,
     status: easyQuestionStatus,
     refetch: refetchEasy,
-  } = useQuery(["easy-question"], getEasyQuestions, {
+  } = useQuery(["easy-question"], () => getQuestions(5, "easy"), {
     select: (question) => ({ data: question.results }),
     refetchOnWindowFocus: false,
   });
@@ -59,7 +54,7 @@ const Game: FC = () => {
     data: mediumQuestions,
     status: mediumQuestionStatus,
     refetch: refetchMedium,
-  } = useQuery(["medium-question"], getMediumQuestions, {
+  } = useQuery(["medium-question"], () => getQuestions(5, "medium"), {
     select: (question) => ({ data: question.results }),
     refetchOnWindowFocus: false,
   });
@@ -68,7 +63,7 @@ const Game: FC = () => {
     data: hardQuestions,
     status: hardQuestionStatus,
     refetch: refetchHard,
-  } = useQuery(["hard-question"], getHardQuestions, {
+  } = useQuery(["hard-question"], () => getQuestions(5, "hard"), {
     select: (question) => ({ data: question.results }),
     refetchOnWindowFocus: false,
   });
